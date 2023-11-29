@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="/static/style.css">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prostate Cancer Prediction</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Prostate Cancer Prediction</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="image" id="imageInput" accept="image/*" placeholder="image">
+            <button type="button" onclick="uploadImage()">Upload Image</button>
+        </form>
+        <div id="imageSection">
+            <img id="uploadedImage" alt="Uploaded Image" class="img">
+        </div>
+        <div id="resultSection">
+            <!-- Results will be displayed here -->
+        </div>
+    </div>
+
+    <script src="/static/javascript.js"></script>
+</body>
+
+</html>
