@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prostate detection</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <nav>
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo">Prostate Cancer Detectionn</a>
+            <ul class="nav-items">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="detection.html">Detection</a></li>
+
+
+            </ul>
+
+        </div>
+    </nav>
+    <section class="empty-page detection">
+        <div id="container">
+            <h1>Prostate cancer detection</h1>
+
+            <div id="image-preview"></div>
+
+            <input type="file" id="mriInput" accept=".jpg, .jpeg, .png" onchange="previewImage()" placeholder="image" />
+            <button onclick="uploadMri()">Upload MRI image</button>
+
+            <div id="result-container"></div>
+            <div id="error-container" class="error-message"></div>
+        </div>
+    </section>
+    <footer>
+        <div class="footer-copyright">
+            <small>Copyright &copy; 2023 Prostate Check
+        </div>
+    </footer>
+    </footer>
+
+    <script>
+        function previewImage() {
+            var input = document.getElementById('mriInput');
+            var imagePreview = document.getElementById('image-preview');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    imagePreview.innerHTML = '<img src="' + e.target.result + '" alt="Image Preview" />';
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                imagePreview.innerHTML = '';
+            }
+        }
+
+        function uploadMri() {
+            var input = document.getElementById('mriInput');
+            var file = input.files[0];
+
+            if (file) {
+                var formData = new FormData();
+                formData.append('mriImage', file);
+
+                fetch('/process_xray', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to upload MRI. Please try again.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        displayResults(data);
+                    })
+                    .catch(error => {
+                        displayError(error.message);
+                    });
+            } else {
+                displayError('Please select an MRI image.');
+            }
+        }
+
+        function displayResults(results) {
+            var resultContainer = document.getElementById('result-container');
+            var errorContainer = document.getElementById('error-container');
+
+            resultContainer.innerHTML = '';
+            errorContainer.innerHTML = '';
+
+            var resultHeader = document.createElement('h3');
+            resultHeader.textContent = 'Diagnosis Results:';
+            resultContainer.appendChild(resultHeader);
+
+            var resultParagraph = document.createElement('p');
+            resultParagraph.textContent = results.message;
+            resultContainer.appendChild(resultParagraph);
+        }
+
+        function displayError(errorMessage) {
+            var errorContainer = document.getElementById('error-container');
+            errorContainer.innerHTML = '';
+
+            var errorParagraph = document.createElement('p');
+            errorParagraph.textContent = errorMessage;
+            errorContainer.appendChild(errorParagraph);
+        }
+    </script>
+
+</body>
+
+</html>
