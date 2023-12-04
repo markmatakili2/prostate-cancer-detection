@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prostate detection</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        #upload-container {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            margin-top: 1px;
+        }
+
+        #image-container {
+            position: relative;
+        }
+
+
+
+        #uploaded-image {
+            margin-top: 50px;
+            width: 330px;
+            height: 350px;
+            border: 2px solid green;
+
+
+            opacity: 0.7;
+            /* Make image slightly visible */
+        }
+
+        #loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        #loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+</head>
+
+<body class="detection">
+    <nav>
+        <div class="container nav-container">
+            <a href="{{ url_for('index') }}" class="nav-logo">Prostate Cancer Detectionn</a>
+            <ul class="nav-items">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+
+                <li><a href="{{ url_for('detection') }}">Detection</a></li>
+
+
+            </ul>
+
+        </div>
+    </nav>
+    <section class="empty-page detection">
+
+
+        <div id="image-container">
+            <img id="uploaded-image" alt="Uploaded MRI Image">
+            <div id="loading-spinner">Loading...</div>
+        </div>
+        <div id="results" style="color: white;font-size: xx-large;"></div>
+        <div id="upload-container">
+            <input type="file" id="file-input" accept="image/*">
+            <button onclick="uploadImage()">Upload</button>
+
+        </div>
+
+
+    </section>
+    <footer>
+        <div class="footer-copyright">
+            <small>Copyright &copy; 2023 Prostate Check
+        </div>
+    </footer>
+    </footer>
+
+
+    <script>
+        function uploadImage() {
+            var fileInput = document.getElementById('file-input');
+            var uploadedImage = document.getElementById('uploaded-image');
+            var loadingSpinner = document.getElementById('loading-spinner');
+            var resultsContainer = document.getElementById('results');
+
+            // Display loading spinner and fade image
+            loadingSpinner.style.display = 'block';
+            uploadedImage.style.opacity = '0.5';
+
+            loadingSpinner.innerHTML = '<div class="loader"></div>';
+
+            var formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            // Send image to Flask backend for processing
+            fetch('/process_image', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Introduce a random delay of 10 or 15 seconds
+                    var randomDelay = Math.random() < 0.5 ? 10000 : 15000;
+
+                    // Use setTimeout to delay the display of results
+                    setTimeout(function () {
+                        // Update UI with results
+                        document.getElementById('results').innerText = data.result;
+                        resultsContainer.innerHTML = '<strong style="color: Green">Results:</strong> ' + data.result;
+
+                        // Restore original image appearance
+                        loadingSpinner.style.display = 'none';
+                        uploadedImage.style.opacity = '1';
+                    }, randomDelay);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+
+                    // Restore original image appearance in case of an error
+                    loadingSpinner.style.display = 'none';
+                    uploadedImage.style.opacity = '1';
+                });
+        }
+
+        // Update the displayed image when a file is selected
+        document.getElementById('file-input').addEventListener('change', function () {
+            var fileInput = this;
+            var uploadedImage = document.getElementById('uploaded-image');
+            var loadingSpinner = document.getElementById('loading-spinner');
+
+            // Display the selected image
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                uploadedImage.src = e.target.result;
+                loadingSpinner.style.display = 'none'; // Hide the loading spinner initially
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+
+            resultsContainer.innerHTML = '';
+        });
+    </script>
+</body>
+
+</html>

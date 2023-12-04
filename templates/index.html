@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prostate detection</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+    <nav>
+        <div class="container nav-container">
+            <a href="{{ url_for('index') }}" class="nav-logo">Prostate Cancer Detectionn</a>
+            <ul class="nav-items">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="{{ url_for('detection') }}">Detection</a></li>
+
+
+            </ul>
+
+        </div>
+    </nav>
+    <section class="empty-page">
+        <h2>Welcome to Prostate Check <br><span>Your Partner in Health</span><br></h2>
+        <p>Our innovative
+            web app is designed to empower you <br> with a reliable and convenient solution for assessing <br> your
+            prostate health.
+        </p>
+        <button class="cn"><a href="{{ url_for('signin') }}">Get started</a></button>
+    </section>
+    <section class="about" id="about">
+        <div>
+            <img src="{{ url_for('static', filename='pcancer.jpg') }}" alt="">
+        </div>
+        <div class="left">
+            <h2>Why Prostate detection?</h2>
+            <p>Early detection saves lives. Take charge of your health <br> journey with ProstateCheck and embark on a
+                proactive
+                approach to <br>
+                prostate cancer prevention. Our commitment is <br> to provide you with a tool that's not only accurate
+                but
+                also
+                convenient, <br>
+                promoting a healthier and happier life.</p>
+            <h2>Key features</h2>
+            <ul>
+                <li><b>Accurate Detection:</b> Leverage cutting-edge technology to ensure accurate <br>and timely
+                    detection
+                    of
+                    potential prostate
+                    issues.</li>
+
+                <li><b>User-Friendly Interface:</b> Our intuitive interface makes navigating <br>the app seamless,
+                    ensuring
+                    a
+                    hassle-free experience
+                    for users of all backgrounds.</li>
+
+                <li><b>Privacy and Security:</b> Your health data is of utmost importance. <br>Rest assured, our
+                    platform
+                    prioritizes privacy and
+                    security to maintain the confidentiality of your information.</li>
+
+                <li><b>Accessible Anytime, Anywhere:</b> With ProstateCheck, monitoring your prostate health is <br>at
+                    your
+                    fingertips. Access the app
+                    whenever and wherever it suits you.</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-copyright">
+            <small>Copyright &copy; 2023 Prostate Check
+        </div>
+    </footer>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const images = [
+                "{{ url_for('static', filename='prost.jpg') }}",
+                "{{ url_for('static', filename='ribon.jpg') }}",
+                "{{ url_for('static', filename='mri.jpg') }}"
+            ]; // Replace with your image URLs
+            let currentIndex = 0;
+
+            function changeBackground() {
+                const gradient = 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5))';
+                const imageUrl = `url(${images[currentIndex]})`;
+
+                document.querySelector('.empty-page').style.backgroundImage = `${gradient}, ${imageUrl}`;;
+
+                currentIndex = (currentIndex + 1) % images.length;
+            }
+
+            // Change background every 5 seconds (adjust as needed)
+            setInterval(changeBackground, 5000);
+
+            // Initial background image
+            changeBackground();
+        });
+    </script>
+
+</body>
+
+
+</html>
